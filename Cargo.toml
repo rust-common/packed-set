@@ -2,6 +2,9 @@
 name = "set-encoding"
 version = "0.1.0"
 authors = ["Sergey Shandar"]
+description = "Finite Set Binary Encoding"
+license = "Apache-2.0"
+repository = "https://github.com/rust-common/set-encoding"
 
 [dependencies]
 bitrw = "^0.7.0"

@@ -24,16 +24,16 @@ pub trait CreateSet<T: int::UInt, B: SetBuilder<T>> {
     fn new(&self, size: T) -> B;
 }
 
-trait WriteSet {
-    fn set_write<S: OrderedSet>(&mut self, s: &S) -> std::io::Result<()>;
+pub trait WriteSet {
+    fn ordered_set_write<S: OrderedSet>(&mut self, s: &S) -> std::io::Result<()>;
 }
 
-struct WriteParams<'t, 'b, S: OrderedSet> {
+struct WriteFrame<'t, 'b, S: OrderedSet> {
     set: &'t S,
     w: &'t mut bitrw::BitWrite<'b>,
 }
 
-impl<S: OrderedSet> WriteParams<'_, '_, S> {
+impl<S: OrderedSet> WriteFrame<'_, '_, S> {
     fn subset_write(&mut self, offset: S::T, size: S::T, value_offset: S::T, value_size: S::T) -> std::io::Result<()> {
         use int::UInt;
         if S::T::_0 < size && size < value_size {
@@ -51,15 +51,15 @@ impl<S: OrderedSet> WriteParams<'_, '_, S> {
     }
 }
 
-impl<'t> WriteSet for bitrw::BitWrite<'_> {
-    fn set_write<S: OrderedSet>(&mut self, s: &S) -> std::io::Result<()> {
+impl WriteSet for bitrw::BitWrite<'_> {
+    fn ordered_set_write<S: OrderedSet>(&mut self, s: &S) -> std::io::Result<()> {
         use tbe::Tbe;
         use tbe::TbeWrite;
         use int::UInt;
         let size = s.size();
         let value_size = s.value_size();
         self.write_tbe(value_size.tbe(), size)?;
-        let mut x = WriteParams { set: s, w: self };
+        let mut x = WriteFrame { set: s, w: self };
         x.subset_write(S::T::_0, size, S::T::_0, value_size)?;
         Ok(())
     }

@@ -1,0 +1,9 @@
+[package]
+name = "set-encoding"
+version = "0.1.0"
+authors = ["Sergey Shandar"]
+
+[dependencies]
+bitrw = "^0.7.0"
+int = "^0.2.11"
+tbe = "^0.2.0"

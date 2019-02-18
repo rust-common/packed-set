@@ -43,9 +43,11 @@ impl<S: OrderedSet> WriteFrame<'_, '_, S> {
             let value_i = self.set.get(offset + i) - value_offset;
             self.w.write_tbe(value_size.tbe(), value_i)?;
             self.subset_write(offset, i, value_offset, value_i)?;
-            let j = i + S::T::_1;
-            let value_j = value_i + S::T::_1;
-            self.subset_write(offset + j, size - j, value_offset + value_j, value_size - value_j)?;
+            {
+                let j = i + S::T::_1;
+                let value_j = value_i + S::T::_1;
+                self.subset_write(offset + j, size - j, value_offset + value_j, value_size - value_j)?;
+            }
         }
         Ok(())
     }

@@ -7,6 +7,7 @@ license = "Apache-2.0"
 repository = "https://github.com/rust-common/set-encoding"
 
 [dependencies]
-bitrw = "^0.8.0"
-int = "^0.2.11"
-tbe = "^0.2.1"
+bitrw = "^0.8.3"
+int = "^0.3.0"
+tbe = "^0.3.3"
+num-traits = "^0.2.6"

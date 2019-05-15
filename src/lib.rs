@@ -146,3 +146,60 @@ impl ReadSet for bitrw::BitRead<'_> {
         })
     }
 }
+
+#[derive(Debug)]
+pub struct ByteSet {
+    pub data: Vec<u8>
+}
+
+impl ByteSet {
+    pub fn get_data(&self) -> &Vec<u8> { &self.data }
+}
+
+fn byte_set_value_size() -> u16 {
+    use int::UInt;
+    (u8::MAX_VALUE as u16) + 1
+}
+
+impl OrderedSet for ByteSet {
+    type T = u16;
+    /// 0 <= value_size()
+    fn value_size(&self) -> Self::T { byte_set_value_size() }
+    /// 0 <= size() <= value_size()
+    fn size(&self) -> Self::T {
+        self.data.len() as u16
+    }
+    /// 0 <= i < size()
+    /// 0 <= get(i) < value_size()
+    fn get(&self, i: Self::T) -> Self::T {
+        self.data[i as usize] as u16
+    }
+}
+
+impl OrderedSetBuilder for ByteSet {
+    type T = u16;
+    fn add(&mut self, i: Self::T, value: Self::T) {
+        self.data[i as usize] = value as u8;
+    }
+}
+
+pub struct CreateByteSet {
+}
+
+impl Clone for CreateByteSet {
+    fn clone(&self) -> Self { CreateByteSet {} }
+}
+
+impl Copy for CreateByteSet {}
+
+impl CreateOrderedSet for CreateByteSet {
+    type T = u16;
+    type B = ByteSet;
+    type S = ByteSet;
+    fn value_size(self) -> Self::T { byte_set_value_size() }
+    fn new(self, size: Self::T, f: &mut FnMut(&mut Self::B) -> std::io::Result<()>) -> std::io::Result<Self::S> {
+        let mut result = ByteSet { data: vec![0; size as usize] };
+        f(&mut result)?;
+        Ok(result)
+    }
+}
